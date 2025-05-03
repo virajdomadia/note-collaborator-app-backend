@@ -36,7 +36,7 @@ const updateNote = async (req, res) => {
     });
 
     // Handle notifications (unchanged)
-    await Promise.all(
+    await Notification.insertMany(
       req.note.collaborators.map((collab) =>
         Notification.create({
           note: req.note._id,
@@ -71,11 +71,28 @@ const deleteNote = async (req, res) => {
 // Get all notes (owned + shared)
 const getMyNotes = async (req, res) => {
   try {
-    const notes = await Note.find({
-      $or: [{ createdBy: req.user }, { "collaborators.user": req.user }],
-    }).populate("createdBy", "name email");
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const sortBy = req.query.sort || "-updatedAt"; // default: newest first
 
-    res.json(notes);
+    const query = {
+      $or: [{ createdBy: req.user }, { "collaborators.user": req.user }],
+    };
+
+    const totalNotes = await Note.countDocuments(query);
+
+    const notes = await Note.find(query)
+      .sort(sortBy)
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .populate("createdBy", "name email");
+
+    res.json({
+      notes,
+      page,
+      totalPages: Math.ceil(totalNotes / limit),
+      totalNotes,
+    });
   } catch (err) {
     res.status(500).json({ message: "Error fetching notes" });
   }

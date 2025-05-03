@@ -3,7 +3,7 @@ const { Server } = require("socket.io");
 let io;
 
 const setupSocket = (server) => {
-  console.log("Setting up Socket.io..."); // Debug message
+  console.log("Setting up Socket.io...");
   io = new Server(server, {
     cors: {
       origin: "*", // Can be updated to specific frontend URL later
