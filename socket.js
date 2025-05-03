@@ -22,8 +22,6 @@ const setupSocket = (server) => {
       console.log(`🔴 Socket disconnected: ${socket.id}`);
     });
   });
-
-  return io;
 };
 
 module.exports = setupSocket;

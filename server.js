@@ -18,7 +18,7 @@ dotenv.config();
 const server = http.createServer(app);
 
 // Set up Socket.io
-const io = setupSocket(server);
+setupSocket(server); // No need to export io or server from here anymore
 
 // Middleware
 app.use(cors());
@@ -44,5 +44,3 @@ const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-module.exports = { io, server };
