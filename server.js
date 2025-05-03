@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const noteRoutes = require("./routes/noteRoutes");
 
 const app = express();
 dotenv.config();
@@ -26,6 +27,7 @@ mongoose
 // });
 app.use("/api/auth", authRoutes); // Auth routes (signup/login)
 app.use("/api/users", userRoutes); // User routes (protected profile)
+app.use("/api/notes", noteRoutes); // Note routes (CRUD operations)
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
