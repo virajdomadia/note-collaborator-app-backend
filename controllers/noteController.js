@@ -46,6 +46,7 @@ const updateNote = async (req, res) => {
         })
       )
     );
+
     res.json(req.note);
   } catch (err) {
     res.status(500).json({ message: "Error updating note" });
