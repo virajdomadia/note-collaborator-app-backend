@@ -1,9 +1,12 @@
 const { Server } = require("socket.io");
 
+let io;
+
 const setupSocket = (server) => {
-  const io = new Server(server, {
+  console.log("Setting up Socket.io..."); // Debug message
+  io = new Server(server, {
     cors: {
-      origin: "*", // Change this if your frontend URL is different
+      origin: "*", // Can be updated to specific frontend URL later
       methods: ["GET", "POST"],
     },
   });
@@ -11,17 +14,23 @@ const setupSocket = (server) => {
   io.on("connection", (socket) => {
     console.log(`🟢 New socket connected: ${socket.id}`);
 
-    // Join a specific note room
     socket.on("joinNoteRoom", (noteId) => {
       socket.join(noteId);
       console.log(`Socket ${socket.id} joined room: ${noteId}`);
     });
 
-    // Handle disconnection
     socket.on("disconnect", () => {
       console.log(`🔴 Socket disconnected: ${socket.id}`);
     });
   });
 };
 
-module.exports = setupSocket;
+const emitEvent = (room, event, data) => {
+  if (io) {
+    io.to(room).emit(event, data);
+  } else {
+    console.error("Socket.io is not initialized");
+  }
+};
+
+module.exports = { setupSocket, emitEvent };

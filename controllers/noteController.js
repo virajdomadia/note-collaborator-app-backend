@@ -1,5 +1,6 @@
+// noteController.js
 const Note = require("../models/Note");
-const { io } = require("../server"); // adjust path as needed
+const { emitEvent } = require("../socket"); // Import the helper
 const Notification = require("../models/Notification");
 
 // Create
@@ -27,12 +28,14 @@ const updateNote = async (req, res) => {
     req.note.lastUpdated = Date.now();
     await req.note.save();
 
-    io.to(req.note._id.toString()).emit("noteUpdated", {
+    // Emit an event using the helper
+    emitEvent(req.note._id.toString(), "noteUpdated", {
       noteId: req.note._id,
       updatedBy: req.user, // user ID or lookup user info
       message: "Note has been updated",
     });
 
+    // Handle notifications (unchanged)
     await Promise.all(
       req.note.collaborators.map((collab) =>
         Notification.create({

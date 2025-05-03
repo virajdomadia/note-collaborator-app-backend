@@ -1,15 +1,17 @@
+// server.js
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const http = require("http");
 
+// Import routes
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const noteRoutes = require("./routes/noteRoutes");
 
 // Import the socket setup function
-const setupSocket = require("./socket");
+const { setupSocket } = require("./socket"); // Make sure you are destructuring correctly
 
 const app = express();
 dotenv.config();
@@ -18,7 +20,7 @@ dotenv.config();
 const server = http.createServer(app);
 
 // Set up Socket.io
-setupSocket(server); // No need to export io or server from here anymore
+setupSocket(server); // This should work now
 
 // Middleware
 app.use(cors());
