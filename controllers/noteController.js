@@ -2,6 +2,7 @@
 const Note = require("../models/Note");
 const { emitEvent } = require("../socket"); // Import the helper
 const Notification = require("../models/Notification");
+// const { canView } = require("../middlewares/noteAccess");
 
 // Create
 const createNote = async (req, res) => {
@@ -98,6 +99,29 @@ const getMyNotes = async (req, res) => {
   }
 };
 
+const getNoteById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const note = await Note.findById(id); // Assuming you're using MongoDB
+    if (!note) {
+      return res.status(404).json({ message: "Note not found" });
+    }
+
+    // Optional: Check if the user has access permissions to view the note
+    // if (!canView(req.user, note)) {
+    //   return res
+    //     .status(403)
+    //     .json({ message: "You do not have permission to view this note" });
+    // }
+
+    res.status(200).json(note);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 // Share note
 const shareNote = async (req, res) => {
   const { userId, permission } = req.body;
@@ -119,5 +143,6 @@ module.exports = {
   updateNote,
   deleteNote,
   getMyNotes,
+  getNoteById,
   shareNote,
 };

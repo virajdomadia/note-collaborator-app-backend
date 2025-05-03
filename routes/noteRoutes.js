@@ -7,11 +7,13 @@ const {
   updateNote,
   deleteNote,
   getMyNotes,
+  getNoteById,
   shareNote,
 } = require("../controllers/noteController");
 
 router.post("/", protect, createNote);
 router.get("/", protect, getMyNotes);
+router.get("/:id", protect, canView, getNoteById);
 router.put("/:id", protect, canEdit, updateNote);
 router.delete("/:id", protect, canEdit, deleteNote);
 router.post("/:id/share", protect, canEdit, shareNote);
