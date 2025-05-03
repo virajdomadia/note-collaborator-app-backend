@@ -1,4 +1,6 @@
 const Note = require("../models/Note");
+const { io } = require("../server"); // adjust path as needed
+const Notification = require("../models/Notification");
 
 // Create
 const createNote = async (req, res) => {
@@ -23,8 +25,24 @@ const updateNote = async (req, res) => {
     req.note.title = title || req.note.title;
     req.note.content = content || req.note.content;
     req.note.lastUpdated = Date.now();
-
     await req.note.save();
+
+    io.to(req.note._id.toString()).emit("noteUpdated", {
+      noteId: req.note._id,
+      updatedBy: req.user, // user ID or lookup user info
+      message: "Note has been updated",
+    });
+
+    await Promise.all(
+      req.note.collaborators.map((collab) =>
+        Notification.create({
+          note: req.note._id,
+          user: collab.user,
+          message: "Note has been updated",
+        })
+      )
+    );
+
     res.json(req.note);
   } catch (err) {
     res.status(500).json({ message: "Error updating note" });
