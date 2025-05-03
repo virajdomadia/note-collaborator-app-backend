@@ -37,7 +37,7 @@ const updateNote = async (req, res) => {
     });
 
     // Handle notifications (unchanged)
-    await Notification.insertMany(
+    await Promise.all(
       req.note.collaborators.map((collab) =>
         Notification.create({
           note: req.note._id,
@@ -46,7 +46,6 @@ const updateNote = async (req, res) => {
         })
       )
     );
-
     res.json(req.note);
   } catch (err) {
     res.status(500).json({ message: "Error updating note" });
