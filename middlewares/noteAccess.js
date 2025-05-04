@@ -23,7 +23,7 @@ const canView = async (req, res, next) => {
   console.log("canView req.params:", req.params);
   console.log("canView req.user:", req.user);
   try {
-    const note = await Note.findById(req.params.id); // ✅ Access id correctly
+    const note = await Note.findById(req.params.id);
     if (!note) return res.status(404).json({ message: "Note not found" });
 
     const userId = req.user;

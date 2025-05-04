@@ -3,7 +3,6 @@ const { protect } = require("../middlewares/authMiddleware");
 const User = require("../models/User");
 const router = express.Router();
 
-// Example of a protected route
 router.get("/profile", protect, (req, res) => {
   res.json({ message: "Protected profile", userId: req.user });
 });

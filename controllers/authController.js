@@ -2,30 +2,25 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 
-// Generate JWT token
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
 };
 
-// Signup controller
 const signup = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-    // Check if user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // Create a new user
     const user = await User.create({
       name,
       email,
       password,
     });
 
-    // Generate JWT
     const token = generateToken(user._id);
 
     res.status(201).json({
@@ -43,24 +38,20 @@ const signup = async (req, res) => {
   }
 };
 
-// Login controller
 const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Check if user exists
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // Check if password matches
     const isMatch = await user.matchPassword(password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // Generate JWT
     const token = generateToken(user._id);
 
     res.json({
